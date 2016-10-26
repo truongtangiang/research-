@@ -10,13 +10,13 @@ namespace TestMissingMultiThread
 {
     class Program
     {
-        static object flag = new object();
-        static int count = 0;
+        static object _flag = new object();
+        static int _count = 0;
         static Random rand = new Random();
-        static Stack<int> stack = new Stack<int>();
-        static List<int> resultList = new List<int>();
-        static List<int> rawList = new List<int>();
-        static Dictionary<string, int> resultDic = new Dictionary<string, int>();
+        static Stack<int> _stack;
+        static List<int> _resultList;
+        static List<int> _rawList;
+        static Dictionary<string, int> _resultDic;
 
         static void Main(string[] args)
         {
@@ -25,14 +25,19 @@ namespace TestMissingMultiThread
 
             for (int i = 0; i < 5; i++)
             {
+                _stack = new Stack<int>();
+                _resultList = new List<int>();
+                _rawList = new List<int>();
+                _resultDic = new Dictionary<string, int>();
+                sw.WriteLine("\n"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff"));
                 TestThread(5, 500);
-                Console.WriteLine("Count {0}", count);
-                Console.WriteLine("Miss: Raw list vs result dic: {0}", string.Join(",", rawList.Except(resultDic.Values.ToList()).ToArray()));
-                Console.WriteLine("Miss: Raw list vs resultList dic: {0}", string.Join(",", rawList.Except(resultList).ToArray()));
+                Console.WriteLine("Count {0}", _count);
+                Console.WriteLine("Miss: Raw list vs result dic: {0}", string.Join(",", _rawList.Except(_resultDic.Values.ToList()).ToArray()));
+                Console.WriteLine("Miss: Raw list vs resultList dic: {0}", string.Join(",", _rawList.Except(_resultList).ToArray()));
 
-                sw.WriteLine("Count {0}", count);
-                sw.WriteLine("Miss: Raw list vs result dic: {0}", string.Join(",", rawList.Except(resultDic.Values.ToList()).ToArray()));
-                sw.WriteLine("Miss: Raw list vs resultList dic: {0}", string.Join(",", rawList.Except(resultList).ToArray()));
+                sw.WriteLine("Count {0}", _count);
+                sw.WriteLine("Miss: Raw list vs result dic: {0}", string.Join(",", _rawList.Except(_resultDic.Values.ToList()).ToArray()));
+                sw.WriteLine("Miss: Raw list vs resultList dic: {0}", string.Join(",", _rawList.Except(_resultList).ToArray()));
             }
 
             sw.Close();
@@ -44,8 +49,8 @@ namespace TestMissingMultiThread
         {
             for (int i = 0; i < range; i++)
             {
-                rawList.Add(i);
-                stack.Push(i);
+                _rawList.Add(i);
+                _stack.Push(i);
             }
 
             Task[] tasks = new Task[totalThread];
@@ -57,7 +62,7 @@ namespace TestMissingMultiThread
 
             Task.WaitAll(tasks);
 
-            Console.WriteLine(resultList.Count);
+            Console.WriteLine(_resultList.Count);
         }
         static void ProcessData()
         {
@@ -75,8 +80,8 @@ namespace TestMissingMultiThread
                 {
 
                     Task.Delay(delay).Wait();
-                    resultDic.Add(data.ToString(), data);
-                    resultList.Add(data);
+                    _resultDic.Add(data.ToString(), data);
+                    _resultList.Add(data);
                     sw.Stop();
                     Console.WriteLine("Complete {0}, {1}s", data, Math.Round(sw.ElapsedMilliseconds / 1000.0, 3));
 
@@ -87,12 +92,12 @@ namespace TestMissingMultiThread
 
         static int getStack()
         {
-            lock (flag)
+            lock (_flag)
             {
-                if (stack.Count > 0)
+                if (_stack.Count > 0)
                 {
-                    count++;
-                    return stack.Pop();
+                    _count++;
+                    return _stack.Pop();
                 }
                 else
                 {

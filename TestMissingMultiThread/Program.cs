@@ -29,15 +29,16 @@ namespace TestMissingMultiThread
                 _resultList = new List<int>();
                 _rawList = new List<int>();
                 _resultDic = new Dictionary<string, int>();
+                _count = 0;
                 sw.WriteLine("\n"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff"));
                 TestThread(5, 500);
                 Console.WriteLine("Count {0}", _count);
                 Console.WriteLine("Miss: Raw list vs result dic: {0}", string.Join(",", _rawList.Except(_resultDic.Values.ToList()).ToArray()));
-                Console.WriteLine("Miss: Raw list vs resultList dic: {0}", string.Join(",", _rawList.Except(_resultList).ToArray()));
+                Console.WriteLine("Miss: Raw list vs result List: {0}", string.Join(",", _rawList.Except(_resultList).ToArray()));
 
                 sw.WriteLine("Count {0}", _count);
                 sw.WriteLine("Miss: Raw list vs result dic: {0}", string.Join(",", _rawList.Except(_resultDic.Values.ToList()).ToArray()));
-                sw.WriteLine("Miss: Raw list vs resultList dic: {0}", string.Join(",", _rawList.Except(_resultList).ToArray()));
+                sw.WriteLine("Miss: Raw list vs result List: {0}", string.Join(",", _rawList.Except(_resultList).ToArray()));
             }
 
             sw.Close();
